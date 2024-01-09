@@ -11,7 +11,7 @@ unsigned currentListeningMode() {
 void toggleNoiseCancellation() {
     NSArray *connectedDevices = [[%c(BluetoothManager) sharedInstance] connectedDevices];
     if (![connectedDevices count]) return;
-    [connectedDevices[0] setListeningMode:2];
+    [connectedDevices[0] setListeningMode:1];
 }
 
 void toggleTransparency() {

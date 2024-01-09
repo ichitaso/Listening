@@ -1,3 +1,5 @@
+#import <Foundation/Foundation.h>
+
 @interface BluetoothDevice : NSObject
 -(unsigned)listeningMode;
 -(BOOL)setListeningMode:(unsigned)arg1 ;
