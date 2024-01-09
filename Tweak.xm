@@ -4,15 +4,23 @@
 
 unsigned currentListeningMode() {
     NSArray *connectedDevices = [[%c(BluetoothManager) sharedInstance] connectedDevices];
+    
     if (![connectedDevices count]) return 0;
     return ((BluetoothDevice *)connectedDevices[0]).listeningMode;
+}
+
+void toggleCancellationModeOff() {
+    NSArray *connectedDevices = [[%c(BluetoothManager) sharedInstance] connectedDevices];
+    if (![connectedDevices count]) return;
+    [connectedDevices[0] setListeningMode:1];
 }
 
 void toggleNoiseCancellation() {
     NSArray *connectedDevices = [[%c(BluetoothManager) sharedInstance] connectedDevices];
     if (![connectedDevices count]) return;
-    [connectedDevices[0] setListeningMode:1];
+    [connectedDevices[0] setListeningMode:2];
 }
+
 
 void toggleTransparency() {
     NSArray *connectedDevices = [[%c(BluetoothManager) sharedInstance] connectedDevices];
@@ -24,8 +32,29 @@ void toggleTransparency() {
 %hook SBMediaController
 -(void)_mediaRemoteNowPlayingApplicationIsPlayingDidChange:(id)arg1 {
     %orig;
-    if (self.isPlaying == YES) toggleNoiseCancellation();
-    else toggleTransparency();
+
+    NSDictionary *bundleDefaults = [[NSUserDefaults standardUserDefaults]
+    persistentDomainForName:@"eu.hrabcak.listeningpreferences"];
+    
+    id isEnabled = [bundleDefaults valueForKey:@"isEnabled"];
+    if ([isEnabled isEqual:@0]) {
+        return;
+    }
+
+    id listeningMode = [bundleDefaults valueForKey:@"listeningMode"];
+    id pausedMode = [bundleDefaults valueForKey:@"pausedMode"];
+
+    id switchToMode;
+    if (self.isPlaying == YES) switchToMode = listeningMode;
+    else switchToMode = pausedMode;
+
+    if ([switchToMode isEqual:@"3"]) {
+        toggleTransparency();
+    } else if ([switchToMode isEqual:@"2"]) {
+        toggleNoiseCancellation();
+    } else if ([switchToMode isEqual:@"1"]) {
+        toggleCancellationModeOff();
+    }
 }
 %end
 
