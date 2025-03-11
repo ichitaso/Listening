@@ -9,7 +9,7 @@
 
 
 
-### Listening is confirmed to work on iOS 14, but could be compatible with lower version. There are no options to configure and no screenshots to display.
+### Listening is confirmed to work on iOS 14 to 16, but could be compatible with lower version.
 
 
 
@@ -27,7 +27,7 @@ https://github.com/nahtedetihw/Listening
 
 ### Depiction
 
-https://repo.packix.com/package/com.nahtedetihw.listening
+https://havoc.app/package/listening
 
 
 
@@ -43,4 +43,4 @@ ethanwhited2208@gmail.com - open to any questions or concerns.
 
 
 
-https://repo.packix.com - Repo containing Listening
+https://havoc.app - Repo containing Listening
