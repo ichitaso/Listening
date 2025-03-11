@@ -1,10 +1,10 @@
 #import "Tweak.h"
+#import "Common.h"
 
 // The original concept of this idea was created by LaughingQuoll with the tweak Banana https://github.com/LaughingQuoll/Banana but of course I have added my own twist
 
 unsigned currentListeningMode() {
     NSArray *connectedDevices = [[%c(BluetoothManager) sharedInstance] connectedDevices];
-    
     if (![connectedDevices count]) return 0;
     return ((BluetoothDevice *)connectedDevices[0]).listeningMode;
 }
@@ -21,7 +21,6 @@ void toggleNoiseCancellation() {
     [connectedDevices[0] setListeningMode:2];
 }
 
-
 void toggleTransparency() {
     NSArray *connectedDevices = [[%c(BluetoothManager) sharedInstance] connectedDevices];
     if (![connectedDevices count]) return;
@@ -30,29 +29,28 @@ void toggleTransparency() {
 
 // toggle transparency when media is paused, toggle noise cancellation when media is playing
 %hook SBMediaController
--(void)_mediaRemoteNowPlayingApplicationIsPlayingDidChange:(id)arg1 {
+- (void)_mediaRemoteNowPlayingApplicationIsPlayingDidChange:(id)arg1 {
     %orig;
+    NSLog(@"_mediaRemoteNowPlayingApplicationIsPlayingDidChange:%@",[[%c(SBMediaController) sharedInstance] nowPlayingApplication].bundleIdentifier);
 
-    NSDictionary *bundleDefaults = [[NSUserDefaults standardUserDefaults]
-    persistentDomainForName:@"eu.hrabcak.listeningpreferences"];
-    
-    id isEnabled = [bundleDefaults valueForKey:@"isEnabled"];
-    if ([isEnabled isEqual:@0]) {
-        return;
+    NSLog(@"isEnabled:%d currentListeningMode():%u",isEnabled,currentListeningMode());
+
+    if (isEnabled && self.isPlaying == YES) {
+        switchToMode = listeningMode;
+    } else if (isEnabled) {
+        switchToMode = pausedMode;
     }
 
-    id listeningMode = [bundleDefaults valueForKey:@"listeningMode"];
-    id pausedMode = [bundleDefaults valueForKey:@"pausedMode"];
+    NSLog(@"switchToMode:%d pausedMode:%d",switchToMode,pausedMode);
 
-    id switchToMode;
-    if (self.isPlaying == YES) switchToMode = listeningMode;
-    else switchToMode = pausedMode;
-
-    if ([switchToMode isEqual:@"3"]) {
+    if (isEnabled && switchToMode == 3) {
+        NSLog(@"toggleTransparency");
         toggleTransparency();
-    } else if ([switchToMode isEqual:@"2"]) {
+    } else if (isEnabled && switchToMode == 2) {
+        NSLog(@"toggleNoiseCancellation");
         toggleNoiseCancellation();
-    } else if ([switchToMode isEqual:@"1"]) {
+    } else if (isEnabled && switchToMode == 1) {
+        NSLog(@"toggleCancellationModeOff");
         toggleCancellationModeOff();
     }
 }
@@ -67,9 +65,23 @@ void toggleTransparency() {
 
 %new
 - (void)togglePlayPauseForListening {
+    NSLog(@"BluetoothAccessorySettingsChanged");
     if ([[%c(SBMediaController) sharedInstance] nowPlayingApplication].bundleIdentifier != NULL) {
         if (currentListeningMode() == 3) [[%c(SBMediaController) sharedInstance] pauseForEventSource:0];
         if (currentListeningMode() == 2) [[%c(SBMediaController) sharedInstance] playForEventSource:0];
     }
 }
 %end
+
+%ctor {
+    %init;
+
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(),
+                                    NULL,
+                                    settingsChanged,
+                                    CFSTR(Notify_Preferences),
+                                    NULL,
+                                    CFNotificationSuspensionBehaviorCoalesce);
+
+    settingsChanged(NULL, NULL, NULL, NULL, NULL);
+}

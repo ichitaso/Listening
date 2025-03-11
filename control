@@ -1,10 +1,10 @@
-Package: eu.ivanhrabcak.listening
+Package: com.ichitaso.listening
 Name: Listening
-Version: 1.1
+Version: 1.2
 Architecture: iphoneos-arm
 Description: Toggle Transparency when paused and when playing!
-Maintainer: Ivan Hrabcak
-Author: Ethan Whited, Ivan Hrabcak
+Maintainer: ichitaso
+Author: Ethan Whited, Ivan Hrabcak, ichitaso
 Section: Tweaks
 Depends: mobilesubstrate
-Replaces: com.nahtedetihw.listening
+Replaces: com.nahtedetihw.listening, eu.ivanhrabcak.listening
