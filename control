@@ -1,6 +1,6 @@
 Package: com.ichitaso.listening
 Name: Listening
-Version: 1.2
+Version: 1.2.1
 Architecture: iphoneos-arm
 Description: Toggle Transparency when paused and when playing!
 Maintainer: ichitaso

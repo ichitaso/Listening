@@ -66,7 +66,7 @@ void toggleTransparency() {
 %new
 - (void)togglePlayPauseForListening {
     NSLog(@"BluetoothAccessorySettingsChanged");
-    if ([[%c(SBMediaController) sharedInstance] nowPlayingApplication].bundleIdentifier != NULL) {
+    if (isEnabled && [[%c(SBMediaController) sharedInstance] nowPlayingApplication].bundleIdentifier != NULL) {
         if (currentListeningMode() == 3) [[%c(SBMediaController) sharedInstance] pauseForEventSource:0];
         if (currentListeningMode() == 2) [[%c(SBMediaController) sharedInstance] playForEventSource:0];
     }

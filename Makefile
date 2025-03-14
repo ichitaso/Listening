@@ -13,7 +13,7 @@ endif
 
 INSTALL_TARGET_PROCESSES = SpringBoard Preferences
 
-THEOS_DEVICE_IP = 192.168.0.15
+THEOS_DEVICE_IP = 192.168.0.16
 
 include $(THEOS)/makefiles/common.mk
 

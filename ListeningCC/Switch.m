@@ -40,7 +40,7 @@ void reloadPrefsCallBack() {
 }
 
 - (UIColor *)selectedColor {
-    return [UIColor colorWithRed:0.28 green:0.83 blue:0.70 alpha:1.0];
+    return [UIColor colorWithRed:0.04 green:0.45 blue:0.57 alpha:1.0];
 }
 
 - (BOOL)isSelected {
